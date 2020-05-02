@@ -4,17 +4,17 @@ Feature:
     As Httpbin client I want to verify that all API resources are working as they should
 
     Scenario: Test output - response code should be (.*)
-        Given I set User-Agent header to apickli
+        Given I set User-Agent header to raaf
         When I GET /get
         Then response code should be 400
 
     Scenario: Test output - response code should be (.*)
-        Given I set User-Agent header to apickli
+        Given I set User-Agent header to raaf
         When I GET /xml
         Then response code should be 400
 
     Scenario: Test output - response header (.*) should exist
-        Given I set User-Agent header to apickli
+        Given I set User-Agent header to raaf
         When I GET /get
         Then response header boo should exist
 
@@ -31,24 +31,24 @@ Feature:
         Then response header Content-Type should not be application/json
 
     Scenario: Test output - response body path (.*) should be (.*)
-        Given I set User-Agent header to apickli
+        Given I set User-Agent header to raaf
         When I GET /get
         Then response body path $.headers.User-Agent should be foo
 
     Scenario: Test output - response header (.*) should not be (.*)
-        Given I set User-Agent header to apickli
+        Given I set User-Agent header to raaf
         When I GET /get
-        Then response body path $.headers.User-Agent should not be apickli
+        Then response body path $.headers.User-Agent should not be raaf
 
     Scenario: Test output - response body should contain (.*)
-        Given I set User-Agent header to apickli
+        Given I set User-Agent header to raaf
         When I GET /get
         Then response body should contain foo
 
     Scenario: Test output - response body should not contain (.*)
-        Given I set User-Agent header to apickli
+        Given I set User-Agent header to raaf
         When I GET /get
-        Then response body should not contain apickli
+        Then response body should not contain raaf
 
     Scenario: Test output - response body should be valid (xml|json)
         When I GET /get

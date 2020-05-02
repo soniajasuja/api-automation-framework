@@ -25,10 +25,10 @@ Feature:
 #test injection logic with other step definitions
 
     Scenario: Setting headers with variables
-        Given I store the raw value apickli as foo in scenario scope
+        Given I store the raw value raaf as foo in scenario scope
         And I set User-Agent header to `foo`
 		When I GET /get
-		Then response body path $.headers.User-Agent should be apickli
+		Then response body path $.headers.User-Agent should be raaf
 
     Scenario: Calling a resource with variables
         Given I store the raw value /get as myResourcePath in scenario scope
@@ -36,7 +36,7 @@ Feature:
 		Then response body path $.url should be (.*)/get
 
     Scenario: Setting headers in datatable with variables
-        Given I store the raw value apickli as foo in scenario scope
+        Given I store the raw value raaf as foo in scenario scope
         And I store the raw value Accept as bar in scenario scope
 		And I set headers to
 		|name|value|
@@ -44,7 +44,7 @@ Feature:
 		|`bar`|application/json|
 		When I GET /get
 		Then response body path $.headers.Accept should be application/json
-		And response body path $.headers.User-Agent should be apickli
+		And response body path $.headers.User-Agent should be raaf
 
 	Scenario: Setting body payload using variables
         Given I store the raw value {"key":"hello-world"} as myPayload in scenario scope

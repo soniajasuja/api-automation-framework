@@ -4,28 +4,28 @@ Feature:
   As Httpbin client I want to verify that all API resources are working as they should
 
   Scenario: Setting headers in GET request
-    Given I set User-Agent header to apickli
+    Given I set User-Agent header to raaf
     When I GET /get
-    Then response body path $.headers.User-Agent should be apickli
+    Then response body path $.headers.User-Agent should be raaf
 
   Scenario: checking values of headers passed as datatable in get request
     Given I set headers to
       | name          | value            |
       | Accept        | application/json |
-      | User-Agent    | apickli          |
+      | User-Agent    | raaf          |
     When I GET /get
     Then response body path $.headers.Accept should be application/json
-    And response body path $.headers.User-Agent should be apickli
+    And response body path $.headers.User-Agent should be raaf
 
   Scenario: combine headers passed as table and Given syntax
     Given I set Custom-Header header to abcd
     And I set headers to
       | name       | value            |
-      | User-Agent | apickli          |
+      | User-Agent | raaf          |
       | Accept     | application/json |
     When I GET /get
     Then response body path $.headers.Accept should be application/json
-    And response body path $.headers.User-Agent should be apickli
+    And response body path $.headers.User-Agent should be raaf
     And response body path $.headers.Custom-Header should be abcd
 
   Scenario: Same header field with multiple values
@@ -108,7 +108,7 @@ Feature:
     And response body path /slideshow/slide[2]/title should not be \d+
 
   Scenario: Response body jsonpath assertions
-    Given I set User-Agent header to apickli
+    Given I set User-Agent header to raaf
     When I GET /get
     Then response body path $.headers.User-Agent should be [a-z]+
     And response body path $.headers.User-Agent should not be \d+
@@ -134,10 +134,10 @@ Feature:
     Then value of scenario variable title should be Overview
 
   Scenario: setting body path as variable (json)
-    Given I set User-Agent header to apickli
+    Given I set User-Agent header to raaf
     When I GET /get
     And I store the value of body path $.headers.User-Agent as agent in scenario scope
-    Then value of scenario variable agent should be apickli
+    Then value of scenario variable agent should be raaf
 
   Scenario: checking values of scenario variables
     Then value of scenario variable title should be undefined

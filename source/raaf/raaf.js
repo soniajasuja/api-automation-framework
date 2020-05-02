@@ -60,20 +60,20 @@ const evaluatePath = function(path, content) {
   }
 };
 
-const getAssertionResult = function(success, expected, actual, apickliInstance) {
+const getAssertionResult = function(success, expected, actual, raafInstance) {
   return {
     success,
     expected,
     actual,
     response: {
-      statusCode: apickliInstance.getResponseObject().statusCode,
-      headers: apickliInstance.getResponseObject().headers,
-      body: apickliInstance.getResponseObject().body,
+      statusCode: raafInstance.getResponseObject().statusCode,
+      headers: raafInstance.getResponseObject().headers,
+      body: raafInstance.getResponseObject().body,
     },
   };
 };
 
-function Apickli(scheme, domain, fixturesDirectory, variableChar) {
+function Raaf(scheme, domain, fixturesDirectory, variableChar) {
   this.domain = scheme + '://' + domain;
   this.headers = {};
   this.cookies = [];
@@ -89,7 +89,7 @@ function Apickli(scheme, domain, fixturesDirectory, variableChar) {
   this.variableChar = (variableChar ? variableChar : '`');
 }
 
-Apickli.prototype.addRequestHeader = function(name, value) {
+Raaf.prototype.addRequestHeader = function(name, value) {
   name = this.replaceVariables(name);
   value = this.replaceVariables(value);
 
@@ -102,12 +102,12 @@ Apickli.prototype.addRequestHeader = function(name, value) {
   this.headers[name] = valuesArray.join(',');
 };
 
-Apickli.prototype.removeRequestHeader = function(name) {
+Raaf.prototype.removeRequestHeader = function(name) {
   name = this.replaceVariables(name);
   delete this.headers[name];
 };
 
-Apickli.prototype.setClientTLSConfiguration = function(configurationName, callback) {
+Raaf.prototype.setClientTLSConfiguration = function(configurationName, callback) {
   if (!Object.prototype.hasOwnProperty.call(this.clientTLSConfig, configurationName)) {
     callback('Client TLS Configuration ' + configurationName + ' does not exist.');
   } else {
@@ -116,7 +116,7 @@ Apickli.prototype.setClientTLSConfiguration = function(configurationName, callba
   }
 };
 
-Apickli.prototype.setRequestHeader = function(name, value) {
+Raaf.prototype.setRequestHeader = function(name, value) {
   this.removeRequestHeader(name);
 
   name = this.replaceVariables(name);
@@ -124,21 +124,21 @@ Apickli.prototype.setRequestHeader = function(name, value) {
   this.addRequestHeader(name, value);
 };
 
-Apickli.prototype.getResponseObject = function() {
+Raaf.prototype.getResponseObject = function() {
   return this.httpResponse;
 };
 
-Apickli.prototype.addCookie = function(cookie) {
+Raaf.prototype.addCookie = function(cookie) {
   cookie = this.replaceVariables(cookie);
   this.cookies.push(cookie);
 };
 
-Apickli.prototype.setRequestBody = function(body) {
+Raaf.prototype.setRequestBody = function(body) {
   body = this.replaceVariables(body);
   this.requestBody = body;
 };
 
-Apickli.prototype.setQueryParameters = function(queryParameters) {
+Raaf.prototype.setQueryParameters = function(queryParameters) {
   const self = this;
   const paramsObject = {};
 
@@ -151,7 +151,7 @@ Apickli.prototype.setQueryParameters = function(queryParameters) {
   this.queryParameters = paramsObject;
 };
 
-Apickli.prototype.setFormParameters = function(formParameters) {
+Raaf.prototype.setFormParameters = function(formParameters) {
   const self = this;
   const paramsObject = {};
 
@@ -164,7 +164,7 @@ Apickli.prototype.setFormParameters = function(formParameters) {
   this.formParameters = paramsObject;
 };
 
-Apickli.prototype.setHeaders = function(headersTable) {
+Raaf.prototype.setHeaders = function(headersTable) {
   const self = this;
 
   headersTable.forEach(function(h) {
@@ -174,7 +174,7 @@ Apickli.prototype.setHeaders = function(headersTable) {
   });
 };
 
-Apickli.prototype.pipeFileContentsToRequestBody = function(file, callback) {
+Raaf.prototype.pipeFileContentsToRequestBody = function(file, callback) {
   const self = this;
   file = this.replaceVariables(file);
   fs.readFile(path.join(this.fixturesDirectory, file), 'utf8', function(err, data) {
@@ -187,37 +187,37 @@ Apickli.prototype.pipeFileContentsToRequestBody = function(file, callback) {
   });
 };
 
-Apickli.prototype.get = function(resource, callback) { // callback(error, response)
+Raaf.prototype.get = function(resource, callback) { // callback(error, response)
   resource = this.replaceVariables(resource);
   this.sendRequest('GET', resource, callback);
 };
 
-Apickli.prototype.post = function(resource, callback) { // callback(error, response)
+Raaf.prototype.post = function(resource, callback) { // callback(error, response)
   resource = this.replaceVariables(resource);
   this.sendRequest('POST', resource, callback);
 };
 
-Apickli.prototype.put = function(resource, callback) { // callback(error, response)
+Raaf.prototype.put = function(resource, callback) { // callback(error, response)
   resource = this.replaceVariables(resource);
   this.sendRequest('PUT', resource, callback);
 };
 
-Apickli.prototype.delete = function(resource, callback) { // callback(error, response)
+Raaf.prototype.delete = function(resource, callback) { // callback(error, response)
   resource = this.replaceVariables(resource);
   this.sendRequest('DELETE', resource, callback);
 };
 
-Apickli.prototype.patch = function(resource, callback) { // callback(error, response)
+Raaf.prototype.patch = function(resource, callback) { // callback(error, response)
   resource = this.replaceVariables(resource);
   this.sendRequest('PATCH', resource, callback);
 };
 
-Apickli.prototype.options = function(resource, callback) { // callback(error, response)
+Raaf.prototype.options = function(resource, callback) { // callback(error, response)
   resource = this.replaceVariables(resource);
   this.sendRequest('OPTIONS', resource, callback);
 };
 
-Apickli.prototype.addHttpBasicAuthorizationHeader = function(username, password) {
+Raaf.prototype.addHttpBasicAuthorizationHeader = function(username, password) {
   username = this.replaceVariables(username);
   password = this.replaceVariables(password);
   const b64EncodedValue = base64Encode(username + ':' + password);
@@ -225,26 +225,26 @@ Apickli.prototype.addHttpBasicAuthorizationHeader = function(username, password)
   this.addRequestHeader('Authorization', 'Basic ' + b64EncodedValue);
 };
 
-Apickli.prototype.assertResponseCode = function(responseCode) {
+Raaf.prototype.assertResponseCode = function(responseCode) {
   responseCode = this.replaceVariables(responseCode);
   const realResponseCode = this.getResponseObject().statusCode.toString();
   const success = (realResponseCode === responseCode);
   return getAssertionResult(success, responseCode, realResponseCode, this);
 };
 
-Apickli.prototype.assertResponseDoesNotContainHeader = function(header, callback) {
+Raaf.prototype.assertResponseDoesNotContainHeader = function(header, callback) {
   header = this.replaceVariables(header);
   const success = typeof this.getResponseObject().headers[header.toLowerCase()] == 'undefined';
   return getAssertionResult(success, true, false, this);
 };
 
-Apickli.prototype.assertResponseContainsHeader = function(header, callback) {
+Raaf.prototype.assertResponseContainsHeader = function(header, callback) {
   header = this.replaceVariables(header);
   const success = typeof this.getResponseObject().headers[header.toLowerCase()] != 'undefined';
   return getAssertionResult(success, true, false, this);
 };
 
-Apickli.prototype.assertHeaderValue = function(header, expression) {
+Raaf.prototype.assertHeaderValue = function(header, expression) {
   header = this.replaceVariables(header);
   expression = this.replaceVariables(expression);
   const realHeaderValue = this.getResponseObject().headers[header.toLowerCase()];
@@ -253,7 +253,7 @@ Apickli.prototype.assertHeaderValue = function(header, expression) {
   return getAssertionResult(success, expression, realHeaderValue, this);
 };
 
-Apickli.prototype.assertPathInResponseBodyMatchesExpression = function(path, regexp) {
+Raaf.prototype.assertPathInResponseBodyMatchesExpression = function(path, regexp) {
   path = this.replaceVariables(path);
   regexp = this.replaceVariables(regexp);
   const regExpObject = new RegExp(regexp);
@@ -262,28 +262,28 @@ Apickli.prototype.assertPathInResponseBodyMatchesExpression = function(path, reg
   return getAssertionResult(success, regexp, evalValue, this);
 };
 
-Apickli.prototype.assertResponseBodyContainsExpression = function(expression) {
+Raaf.prototype.assertResponseBodyContainsExpression = function(expression) {
   expression = this.replaceVariables(expression);
   const regex = new RegExp(expression);
   const success = regex.test(this.getResponseObject().body);
   return getAssertionResult(success, expression, null, this);
 };
 
-Apickli.prototype.assertResponseBodyContentType = function(contentType) {
+Raaf.prototype.assertResponseBodyContentType = function(contentType) {
   contentType = this.replaceVariables(contentType);
   const realContentType = getContentType(this.getResponseObject().body);
   const success = (realContentType === contentType);
   return getAssertionResult(success, contentType, realContentType, this);
 };
 
-Apickli.prototype.assertPathIsArray = function(path) {
+Raaf.prototype.assertPathIsArray = function(path) {
   path = this.replaceVariables(path);
   const value = evaluatePath(path, this.getResponseObject().body);
   const success = Array.isArray(value);
   return getAssertionResult(success, 'array', typeof value, this);
 };
 
-Apickli.prototype.assertPathIsArrayWithLength = function(path, length) {
+Raaf.prototype.assertPathIsArrayWithLength = function(path, length) {
   path = this.replaceVariables(path);
   length = this.replaceVariables(length);
   let success = false;
@@ -297,29 +297,29 @@ Apickli.prototype.assertPathIsArrayWithLength = function(path, length) {
   return getAssertionResult(success, length, actual, this);
 };
 
-Apickli.prototype.evaluatePathInResponseBody = function(path) {
+Raaf.prototype.evaluatePathInResponseBody = function(path) {
   path = this.replaceVariables(path);
   return evaluatePath(path, this.getResponseObject().body);
 };
 
-Apickli.prototype.setAccessToken = function(token) {
+Raaf.prototype.setAccessToken = function(token) {
   accessToken = token;
 };
 
-Apickli.prototype.unsetAccessToken = function() {
+Raaf.prototype.unsetAccessToken = function() {
   accessToken = undefined;
 };
 
-Apickli.prototype.getAccessTokenFromResponseBodyPath = function(path) {
+Raaf.prototype.getAccessTokenFromResponseBodyPath = function(path) {
   path = this.replaceVariables(path);
   return evaluatePath(path, this.getResponseObject().body);
 };
 
-Apickli.prototype.setAccessTokenFromResponseBodyPath = function(path) {
+Raaf.prototype.setAccessTokenFromResponseBodyPath = function(path) {
   this.setAccessToken(this.getAccessTokenFromResponseBodyPath(path));
 };
 
-Apickli.prototype.setBearerToken = function() {
+Raaf.prototype.setBearerToken = function() {
   if (accessToken) {
     this.removeRequestHeader('Authorization');
     return this.addRequestHeader('Authorization', 'Bearer ' + accessToken);
@@ -328,48 +328,48 @@ Apickli.prototype.setBearerToken = function() {
   }
 };
 
-Apickli.prototype.storeValueInScenarioScope = function(variableName, value) {
+Raaf.prototype.storeValueInScenarioScope = function(variableName, value) {
   this.scenarioVariables[variableName] = value;
 };
 
-Apickli.prototype.storeValueOfHeaderInScenarioScope = function(header, variableName) {
+Raaf.prototype.storeValueOfHeaderInScenarioScope = function(header, variableName) {
   header = this.replaceVariables(header); // only replace header. replacing variable name wouldn't make sense
   const value = this.getResponseObject().headers[header.toLowerCase()];
   this.scenarioVariables[variableName] = value;
 };
 
-Apickli.prototype.storeValueOfResponseBodyPathInScenarioScope = function(path, variableName) {
+Raaf.prototype.storeValueOfResponseBodyPathInScenarioScope = function(path, variableName) {
   path = this.replaceVariables(path); // only replace path. replacing variable name wouldn't make sense
   const value = evaluatePath(path, this.getResponseObject().body);
   this.scenarioVariables[variableName] = value;
 };
 
-Apickli.prototype.assertScenarioVariableValue = function(variable, value) {
+Raaf.prototype.assertScenarioVariableValue = function(variable, value) {
   value = this.replaceVariables(value); // only replace value. replacing variable name wouldn't make sense
   return (String(this.scenarioVariables[variable]) === value);
 };
 
-Apickli.prototype.storeValueOfHeaderInGlobalScope = function(headerName, variableName) {
+Raaf.prototype.storeValueOfHeaderInGlobalScope = function(headerName, variableName) {
   headerName = this.replaceVariables(headerName); // only replace headerName. replacing variable name wouldn't make sense
   const value = this.getResponseObject().headers[headerName.toLowerCase()];
   this.setGlobalVariable(variableName, value);
 };
 
-Apickli.prototype.storeValueOfResponseBodyPathInGlobalScope = function(path, variableName) {
+Raaf.prototype.storeValueOfResponseBodyPathInGlobalScope = function(path, variableName) {
   path = this.replaceVariables(path); // only replace path. replacing variable name wouldn't make sense
   const value = evaluatePath(path, this.getResponseObject().body);
   this.setGlobalVariable(variableName, value);
 };
 
-Apickli.prototype.setGlobalVariable = function(name, value) {
+Raaf.prototype.setGlobalVariable = function(name, value) {
   globalVariables[name] = value;
 };
 
-Apickli.prototype.getGlobalVariable = function(name) {
+Raaf.prototype.getGlobalVariable = function(name) {
   return globalVariables[name];
 };
 
-Apickli.prototype.validateResponseWithSchema = function(schemaFile, callback) {
+Raaf.prototype.validateResponseWithSchema = function(schemaFile, callback) {
   const self = this;
   schemaFile = this.replaceVariables(schemaFile, self.scenarioVariables, self.variableChar);
 
@@ -387,7 +387,7 @@ Apickli.prototype.validateResponseWithSchema = function(schemaFile, callback) {
   });
 };
 
-Apickli.prototype.validateResponseWithSwaggerSpecDefinition = function(definitionName, swaggerSpecFile, callback) {
+Raaf.prototype.validateResponseWithSwaggerSpecDefinition = function(definitionName, swaggerSpecFile, callback) {
   const self = this;
   swaggerSpecFile = this.replaceVariables(swaggerSpecFile, self.scenarioVariables, self.variableChar);
 
@@ -411,7 +411,7 @@ Apickli.prototype.validateResponseWithSwaggerSpecDefinition = function(definitio
   });
 };
 
-exports.Apickli = Apickli;
+exports.Raaf = Raaf;
 
 /**
  * Replaces variable identifiers in the resource string
@@ -423,7 +423,7 @@ exports.Apickli = Apickli;
  *
  * Credits: Based on contribution by PascalLeMerrer
  */
-Apickli.prototype.replaceVariables = function(resource, scope, variableChar, offset) {
+Raaf.prototype.replaceVariables = function(resource, scope, variableChar, offset) {
   scope = scope || this.scenarioVariables;
   variableChar = variableChar || this.variableChar;
   offset = offset || 0;
@@ -442,7 +442,7 @@ Apickli.prototype.replaceVariables = function(resource, scope, variableChar, off
   return resource;
 };
 
-Apickli.prototype.sendRequest = function(method, resource, callback) {
+Raaf.prototype.sendRequest = function(method, resource, callback) {
   const self = this;
   const options = this.httpRequestOptions || {};
   options.url = this.domain + resource;
