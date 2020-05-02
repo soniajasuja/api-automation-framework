@@ -1,13 +1,10 @@
 {
-    "name": "apickli",
+    "name": "raaf",
     "version": "2.3.3",
     "description": "Collection of utility functions and a gherkin framework for REST API integration testing based on cucumber.js",
-    "main": "apickli.js",
+    "main": "raaf.js",
     "readme": "README.md",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/apickli/apickli.git"
-    },
+  
     "keywords": [
         "cucumber.js",
         "integration",
