@@ -1,15 +1,8 @@
-# apickli - REST API integration testing framework with cucumber.js
+# REST API automation framework(RAAF) with request and cucumber.js module
 
-![NPM version](https://badge.fury.io/js/apickli.svg)
-[![Build Status](https://travis-ci.org/apickli/apickli.svg?branch=master)](https://travis-ci.org/apickli/apickli)
-[![NPM](https://nodei.co/npm/apickli.png)](https://nodei.co/npm/apickli/)
-
-
-**Apickli** is a REST API integration testing framework based on cucumber.js.
 
 It provides a gherkin framework and a collection of utility functions to make API testing easy and less time consuming.
 
-**Apickli** is also available as an [NPM package](https://www.npmjs.com/package/apickli).
 
 [Cucumber.js](https://github.com/cucumber/cucumber-js) is JavaScript & Node.js implementation of Behaviour Driven Development test framework - [Cucumber](http://cukes.info/). Cucumber.js is using [Gherkin](http://cukes.info/gherkin.html) language for describing the test scenarios in [BDD](http://en.wikipedia.org/wiki/Behavior-driven_development) manner.
 
@@ -25,7 +18,7 @@ Let's start a new integration testing project for an API called *myapi*. The fol
     test/
     ---- features/
     --------- step_definitions/
-    -------------- apickli-gherkin.js
+    -------------- raaf-gherkin.js
     --------- support/
     -------------- init.js
     --------- myapi.feature
@@ -42,7 +35,7 @@ This can be an example package.json file for our project:
 	"version": "1.0.0",
 	"description": "Integration testing for myapi v1",
 	"dependencies": {
-		"apickli": "latest"
+		"raaf": "latest"
 	}
 }
 ```
@@ -65,33 +58,33 @@ Feature:
 	As Httpbin client I want to verify that all API resources are working as they should
 
 	Scenario: Setting headers in GET request
-		Given I set User-Agent header to apickli
+		Given I set User-Agent header to raaf
 		When I GET /get
-		Then response body path $.headers.User-Agent should be apickli
+		Then response body path $.headers.User-Agent should be raaf
 ```
 
-#### 5. Get apickli-gherkin steps
-We now need the corresponding step definitions that implement the steps in our scenario. Apickli has a collection of steps already implemented - ready to be included in your project - see [gherkin expressions](#gherkin-expressions).
+#### 5. Get raaf-gherkin steps
+We now need the corresponding step definitions that implement the steps in our scenario. Raaf has a collection of steps already implemented - ready to be included in your project - see [gherkin expressions](#gherkin-expressions).
 
-The simplest way to adopt these expressions is to create a file named apickli-gherkin.js in features/step_definitions and import the apickli/gherkin.js module.
+The simplest way to adopt these expressions is to create a file named raaf-gherkin.js in features/step_definitions and import the raaf/gherkin.js module.
 
-Add the following to test/features/step_definitions/apickli-gherkin.js
+Add the following to test/features/step_definitions/raaf-gherkin.js
 ```javascript
-module.exports = require('apickli/apickli-gherkin');
+module.exports = require('raaf/raaf-gherkin');
 ```
 
 #### 6. Support code
-Now we need a support code to implement cucumber hooks and initialize apickli. Add the following in features/support/init.js:
+Now we need a support code to implement cucumber hooks and initialize raaf. Add the following in features/support/init.js:
 
 ```js
 'use strict';
 
-const apickli = require('apickli');
+const raaf = require('raaf');
 const {Before} = require('cucumber');
 
 Before(function() {
-    this.apickli = new apickli.Apickli('http', 'httpbin.org');
-    this.apickli.addRequestHeader('Cache-Control', 'no-cache');
+    this.raaf = new raaf.Raaf('http', 'httpbin.org');
+    this.raaf.addRequestHeader('Cache-Control', 'no-cache');
 });
 ```
 
@@ -145,7 +138,7 @@ module.exports = function(grunt) {
 ```json
 	...
 	"dependencies": {
-		"apickli": "latest",
+		"raaf": "latest",
 		"grunt": "latest",
 		"grunt-cucumber": "latest"
 	}
@@ -170,9 +163,9 @@ Feature:
 
 
   Scenario: Setting headers in GET request                         # features/httpbin.feature:5
-    Given I set User-Agent header to apickli                       # features/httpbin.feature:6
+    Given I set User-Agent header to raaf                       # features/httpbin.feature:6
     When I GET /get                                                # features/httpbin.feature:7
-    Then response body path $.headers.User-Agent should be apickli # features/httpbin.feature:8
+    Then response body path $.headers.User-Agent should be raaf # features/httpbin.feature:8
 
 
 1 scenario (1 passed)
@@ -225,7 +218,7 @@ $ gulp test
 ```
 
 ## Gherkin Expressions
-The following gherkin expressions are implemented in apickli source code [source/apickli/apickli-gherkin.js](source/apickli/apickli-gherkin.js):
+The following gherkin expressions are implemented in raaf source code [source/raaf/raaf-gherkin.js](source/raaf/raaf-gherkin.js):
 
 ```
 GIVEN:
@@ -273,7 +266,7 @@ THEN:
 ```
 
 ## Setting Proxy Server
-apickli uses node.js request module for HTTP communications which supports setting proxy servers via the following environment variables:
+This framework uses node.js request module for HTTP communications which supports setting proxy servers via the following environment variables:
 * HTTP_PROXY / http_proxy
 * HTTPS_PROXY / https_proxy
 * NO_PROXY / no_proxy
@@ -284,35 +277,14 @@ For more information, see https://github.com/request/request#controlling-proxy-b
 
 It is possible to use Scenario Variables in a Feature file, that will have values injected when the tests are run. Whilst defining values explicitly provides better clarity to those reading a feature file, there are some configuration values such as Client Id which it is easier to externalise.
 
-By default, backticks are use to indicate a variable in a feature file. When instantiating Apickli, a different character can be passed as a parameter. In order to follow BDD best practices, global variables should not be used in the way. Each Scenario should be independent, and as such if you would like to define configurable variables it should be done using the Before hook:
+By default, backticks are use to indicate a variable in a feature file. When instantiating the client, a different character can be passed as a parameter. In order to follow BDD best practices, global variables should not be used in the way. Each Scenario should be independent, and as such if you would like to define configurable variables it should be done using the Before hook:
 
 See [source/test/features/injecting-variables.feature](source/test/features/injecting-variables.feature) for examples.
 
-## Client Authentication
 
-In order to make a request to a server that is protected by Mutual TLS, you must specify your client TLS configuration. This can be done when initializing Apickli as shown below.
-
-``` shell
-defineSupportCode(function({Before}) {
-    Before(function() {
-        this.apickli = new apickli.Apickli('http', 'httpbin.org');
-        this.apickli.clientTLSConfig = {
-            valid: {
-                key: './fixtures/client-key.pem',
-                cert: './fixtures/client-crt.pem',
-                ca: './fixtures/ca-crt.pem',
-            },
-        };
-    });
-});
-```
 
 This configuration can then be referenced using the following step definitions.
 
 ``` shell
 Given I have valid client TLS configuration
 ```
-
-## Contributing
-
-If you have any comments or suggestions, feel free to raise [an issue](https://github.com/apickli/apickli/issues) or fork the project and issue a pull request with suggested improvements.
